@@ -13,6 +13,8 @@ As a result we can, at least up to a certain degree, use ffmpegs brng filter to 
 Standard sharp transitions (e.g., Black to White) can create high-frequency "ringing" or overshoots. Under EBU R103, these transients should be filtered out before measurement so they don't trigger false positives.
 
 ### Problem #2: No matter which results the uncompressed, computer generated .mov file variants have, Encoders will change the resulting values!
+- only all "GOOD" encoded Samples in this fileset match the expectations
+- in the "BAD" encoded Samples, the prores and XDCAM encoder actually removed more overshoots so the encoded output has less than 1% EBU R103 violation
 
 ### The R103 Filter
 The standard recommends a **Quarter-Band Horizontal Filter** (Coefficients: 1, 2, 3, 4, 3, 2, 1) to smooth these transients.
@@ -40,7 +42,7 @@ GOOD: All encoded versions show slightly different values but still over 1% gamu
 BAD 10bit files:
 10b_bad.mov: 4.32292% pixels out of gamut (without filter), 1.04167% pixels out of gamut (with filter)
 
-BAD: BEWARE, only the XAVC encoded variant still violates R103, prores and xdcam have less than 1% gamut errors after encoding
+BAD: BEWARE, **only the "BAD" uncompressed mov and  XAVC encoded variant still violates R103**, prores and xdcam have less than 1% gamut errors after encoding
 </pre>
 
 ``` bat
