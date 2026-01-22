@@ -1,20 +1,30 @@
 
-The purpose of these files is to test if measuring equipment is correctly applying EBU R103 out of gamut measurement, especially if the Filter suggested in R103 is being applied correctly.
-The Files 8b_2.mov and 10b_2.mov are uncompressed versions of images that trigger out of gamut errors when measured without filter (see Cite)
-as defined in EBU R103 2020. 
-It was verified that:
-	1) without filter: the ffmpeg measured brng output matches 100% the one from professional QC software
-	2) with convolution filter: the ffmpeg convolution filter in combination with brng measurement matches about 99.5% the result from professional qc software
-	
+# EBU R103 Gamut Test Files
 
-Cite: Video Signal Filtering
-		To remove transient over- and under-excursions of the signals, and to minimise the effect of high
+This repository contains test signals designed to verify if QC equipment correctly applies the **EBU R103 (2020)** "Preferred Gamut" measurements, specifically the recommended transient filtering.
+
+It was verified that:
+- without filter: the ffmpeg measured brng output matches 100% the one from professional QC software
+- with convolution filter: the ffmpeg convolution filter in combination with brng measurement matches about 99.5% the result from professional qc software
+
+### The Problem: Transient Overshoots
+Standard sharp transitions (e.g., Black to White) can create high-frequency "ringing" or overshoots. Under EBU R103, these transients should be filtered out before measurement so they don't trigger false positives.
+
+### The R103 Filter
+The standard recommends a **Quarter-Band Horizontal Filter** (Coefficients: 1, 2, 3, 4, 3, 2, 1) to smooth these transients.
+- **Goal:** Files that fail RAW measurement but pass after the R103 filter is applied.
+- **Secondary Goal:** Files that exceed the recommended 1% only by a fraction in order to verify accuracy of measurement
+  
+Cite from R103-2020: 
+- Video Signal Filtering
+		- To remove transient over- and under-excursions of the signals, and to minimise the effect of high
 		frequency noise on the colour gamut measurements, the use of appropriate filters in all measurement
 		channels is recommended.
-	  For interlaced and progressive signals a quarter band filter applied horizontally and a half band filter applied vertically is recommended.
-		Horizontal Filter Coefficients: 1/16, 2/16, 3/16, 4/16, 3/16, 2/16, 1/16
+- For interlaced and progressive signals a quarter band filter applied horizontally and a half band filter applied vertically is recommended.
+		- Horizontal Filter Coefficients: 1/16, 2/16, 3/16, 4/16, 3/16, 2/16, 1/16
 		Vertical Filter Coefficients: 1/4, 1/2, 1/4 (Note: this is applied intra field2 for interlace signals).
-		
+
+<pre>
 GOOD 8bit files:
 8b_2.mov: 1.04167% pixels out of gamut (without filter), 0% pixels out of gamut (with filter)
 
@@ -23,16 +33,13 @@ GOOD 10bit files:
 
 GOOD: All encoded versions show slightly different values but still over 1% gamut errors when measured without filter
 
-BAD 8bit files:
-
-
 BAD 10bit files:
 10b_bad.mov: 4.32292% pixels out of gamut (without filter), 1.04167% pixels out of gamut (with filter)
 
 BAD: BEWARE, only the XAVC encoded variant still violates R103, prores and xdcam have less than 1% gamut errors after encoding
+</pre>
 
-
-
+``` bat
 :: CONTENTS OF ORIGINAL CREATEANDANALYZE.BAT
 
 setlocal
@@ -79,4 +86,4 @@ ffmpeg -i %OUTPUT% -vf "signalstats=stat=brng,metadata=mode=print" -f null - 2>&
 
 ::measure with EBU r103 convolution
 ffmpeg -i %OUTPUT% -vf "convolution=0m='0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2 3 4 3 2 1 2 4 6 8 6 4 2 1 2 3 4 3 2 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0':1m='0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2 3 4 3 2 1 2 4 6 8 6 4 2 1 2 3 4 3 2 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0':2m='0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2 3 4 3 2 1 2 4 6 8 6 4 2 1 2 3 4 3 2 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0':3m='0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2 3 4 3 2 1 2 4 6 8 6 4 2 1 2 3 4 3 2 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0':0rdiv=0.015625:1rdiv=0.015625:2rdiv=0.015625:3rdiv=0.015625,signalstats=stat=brng,metadata=mode=print" -f null - 2>&1 | findstr BRNG
-
+```
