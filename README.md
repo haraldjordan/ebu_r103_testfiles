@@ -12,6 +12,8 @@ As a result we can, at least up to a certain degree, use ffmpegs brng filter to 
 ### The Problem: Transient Overshoots
 Standard sharp transitions (e.g., Black to White) can create high-frequency "ringing" or overshoots. Under EBU R103, these transients should be filtered out before measurement so they don't trigger false positives.
 
+### Problem #2: No matter which results the uncompressed, computer generated .mov file variants have, Encoders will change the resulting values!
+
 ### The R103 Filter
 The standard recommends a **Quarter-Band Horizontal Filter** (Coefficients: 1, 2, 3, 4, 3, 2, 1) to smooth these transients.
 - **Goal:** Files that fail RAW measurement but pass after the R103 filter is applied.
