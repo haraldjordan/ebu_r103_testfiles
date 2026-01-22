@@ -46,6 +46,8 @@ BAD: BEWARE, only the XAVC encoded variant still violates R103, prores and xdcam
 
 setlocal
 
+:: use BARWIDTH 300 to create a sample that has less than 1% with R103 filter but more than 1% without filter
+:: use BARWIDTH 105 to create a sample that is just slightly above 1% with R103 filter 
 set BARWIDTH=300
 set HEIGHT=1080
 set DURATION_WHITE=1
