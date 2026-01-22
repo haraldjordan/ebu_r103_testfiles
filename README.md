@@ -7,6 +7,8 @@ It was verified that:
 - without filter: the ffmpeg measured brng output matches 100% the one from professional QC software
 - with convolution filter: the ffmpeg convolution filter in combination with brng measurement matches about 99.5% the result from professional qc software
 
+As a result we can, at least up to a certain degree, use ffmpegs brng filter to validate the measurement equipments results.
+
 ### The Problem: Transient Overshoots
 Standard sharp transitions (e.g., Black to White) can create high-frequency "ringing" or overshoots. Under EBU R103, these transients should be filtered out before measurement so they don't trigger false positives.
 
